@@ -7,15 +7,15 @@ var plr_xy = {
 };
 
 var objs = [obj1, obj2, obj3];
-var objs_xy = [{}, {}, {}];
+var objs_xy = [{x: -1}, {x: -1}, {x: -1}];
 
 //// input ////
 
 var moffset;
 
-function updatex(x) {
+var updatex = function (x) {
     plr_xy.x = (x - moffset) / zone.clientWidth;
-}
+};
 
 main.onmousemove = function (e) {
     updatex(e.clientX);
@@ -24,20 +24,27 @@ main.onmousemove = function (e) {
 
 main.onclick = function (e) {
     updatex(e.clientX);
-    plr_xy.vy = -0.1;
+    jump();
     e.preventDefault();
 };
 
 main.ontouchstart = function (e) {
     updatex(e.changedTouches[0].clientX);
-    plr_xy.vy = -0.1;
+    jump();
     e.preventDefault();
     main.onclick = undefined;
 };
 
-main.ondblclick = function (e) {
+var noevent = function (e) {
     e.preventDefault();
 };
+
+main.ondblclick = noevent;
+main.ondrag = noevent;
+main.ondragstart = noevent;
+main.onfocus = noevent;
+main.onselect = noevent;
+main.onselectstart = noevent;
 
 //// physics ////
 
@@ -76,14 +83,14 @@ var calcpos = function (xy) {
         }
     }
 
-    if (xy.y < 0) {
-        if (xy.limit) {
-            if (xy.vy < 0) xy.vy *= rate;
-            xy.y = 0;
-        } else {
-            xy.out = true;
-        }
-    }
+    // if (xy.y < 0) {
+    //     if (xy.limit) {
+    //         if (xy.vy < 0) xy.vy *= rate;
+    //         xy.y = 0;
+    //     } else {
+    //         xy.out = true;
+    //     }
+    // }
 
     if (xy.y > 1) {
         if (xy.limit) {
@@ -99,21 +106,23 @@ var calcpos = function (xy) {
 
 //// game ////
 
-
+var jump = function () {
+    plr_xy.vy = -0.1;
+};
 
 //// output ////
 
 var makepx = function (pos) {
     return Math.floor(pos) + 'px';
-}
+};
 
 var doscale = function () {
-    var zone_border = 0.15;
+    var zone_border = 0.12;
     var plr_scale = 0.2;
 
     var min_size = Math.min(
         main.clientWidth, main.clientHeight
-    )
+    );
 
     // apply
 
@@ -145,4 +154,4 @@ setInterval(function (e) {
     for (var i in objs) {
         applypos(objs[i], objs_xy[i]);
     }
-}, 40);
+}, 25);
