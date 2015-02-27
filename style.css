@@ -1,0 +1,60 @@
+body {
+    font-family: sans-serif;
+}
+
+.main {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: #FFF0C0;
+}
+
+.info {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    overflow: hidden;
+    opacity: 0.6;
+}
+
+.obj {
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+.plr {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.imgp {
+    position: absolute;
+    left: 0;
+    top: 0;
+    max-width: 30%;
+    max-height: 30%;
+}
+
+.size1 {
+    font-size: 40px;
+    line-height: 40px;
+    color: #B06000;
+}
+
+.size2 {
+    font-size: 24px;
+    line-height: 24px;
+    color: #603800;
+}
+
+.size3 {
+    font-size: 16px;
+    line-height: 16px;
+    color: #603800;
+}
