@@ -3,7 +3,7 @@
 var plr_xy = {
     x: 0.5, y: 1,
     vx: 0, vy: 0,
-    g: -0.008, vymin: -0.08,
+    g: 0.01, vymax: 0.12,
     limit: true
 };
 
@@ -11,7 +11,7 @@ var objinit = function () {
     return {
         x: -1, y: -1,
         vx: 0, vy: 0,
-        g: 0, vymin: -0.04,
+        g: 0, vymax: 0.03,
         limit: false
     };
 };
@@ -29,7 +29,7 @@ var updatex = function (x) {
 };
 
 var jump = function () {
-    plr_xy.vy = -0.1;
+    plr_xy.vy = -0.12;
 };
 
 main.onmousemove = function (e) {
@@ -71,9 +71,9 @@ var calcpos = function (xy) {
 
     // gravity
 
-    xy.vy -= xy.g;
-    if (xy.vy < xy.vymin) {
-        xy.vy = xy.vymin;
+    xy.vy += xy.g;
+    if (xy.vy > xy.vymax) {
+        xy.vy = xy.vymax;
     }
 
     // collision
@@ -142,9 +142,9 @@ var throwobj = function () {
             x: rev ? 1.1 : -0.1,
             y: rand(0.2, 0.5),
             vx: spd * rand(0.01, 0.02) * (rev ? -1 : 1),
-            vy: spd * rand(-0.02, -0.05),
-            g: -Math.pow(spd * rand(0.03, 0.06), 2),
-            vymin: -0.04,
+            vy: spd * rand(-0.01, -0.03),
+            g: Math.pow(spd * rand(0.03, 0.05), 2),
+            vymax: 0.03,
             limit: false
         };
     }
@@ -176,8 +176,13 @@ var doscale = function () {
 };
 
 var applypos = function (obj, xy) {
-    obj.style.left = makepx(zone.clientWidth * xy.x - obj.clientWidth * 0.5);
-    obj.style.top = makepx(zone.clientHeight * xy.y - obj.clientHeight * 0.5);
+    var x = zone.clientWidth * xy.x;
+    obj.style.left = makepx(x - obj.clientWidth * 0.5);
+
+    var y = zone.clientHeight - Math.min(
+        zone.clientHeight,  zone.clientWidth
+    ) * (1 - xy.y);
+    obj.style.top = makepx(y - obj.clientHeight * 0.5);
 };
 
 //// timer ////
