@@ -59,8 +59,8 @@ var calcpos = function (xy) {
     xy.out = false;
 
     if (xy.x < 0) {
-        if (xy.limit && xy.vx < 0) {
-            xy.vx *= rate;
+        if (xy.limit) {
+            if (xy.vx < 0) xy.vx *= rate;
             xy.x = 0;
         } else {
             xy.out = true;
@@ -68,8 +68,8 @@ var calcpos = function (xy) {
     }
 
     if (xy.x > 1) {
-        if (xy.limit && xy.vx > 0) {
-            xy.vx *= rate;
+        if (xy.limit) {
+            if (xy.vx > 0) xy.vx *= rate;
             xy.x = 1;
         } else {
             xy.out = true;
@@ -77,8 +77,8 @@ var calcpos = function (xy) {
     }
 
     if (xy.y < 0) {
-        if (xy.limit && xy.vy < 0) {
-            xy.vy *= rate;
+        if (xy.limit) {
+            if (xy.vy < 0) xy.vy *= rate;
             xy.y = 0;
         } else {
             xy.out = true;
@@ -86,8 +86,8 @@ var calcpos = function (xy) {
     }
 
     if (xy.y > 1) {
-        if (xy.limit && xy.vy > 0) {
-            xy.vy *= rate;
+        if (xy.limit) {
+            if (xy.vy > 0) xy.vy *= rate;
             xy.y = 1;
         } else {
             xy.out = true;
@@ -106,11 +106,6 @@ var calcpos = function (xy) {
 var makepx = function (pos) {
     return Math.floor(pos) + 'px';
 }
-
-var setpos = function (obj, xy) {
-    obj.style.left = makepx(zone.clientWidth * xy.x);
-    obj.style.top = makepx(zone.clientHeight * xy.y);
-};
 
 var doscale = function () {
     var zone_border = 0.15;
@@ -131,15 +126,23 @@ var doscale = function () {
     plr.style.height = pspx;
 };
 
+var applypos = function (obj, xy) {
+    obj.style.left = makepx(zone.clientWidth * xy.x);
+    obj.style.top = makepx(zone.clientHeight * xy.y);
+};
+
 //// timer ////
 
 setInterval(function (e) {
-    doscale();
-
     calcpos(plr_xy);
-    setpos(plr, plr_xy);
     for (var i in objs) {
         calcpos(objs_xy[i]);
-        setpos(objs[i], objs_xy[i]);
+    }
+
+    doscale();
+
+    applypos(plr, plr_xy);
+    for (var i in objs) {
+        applypos(objs[i], objs_xy[i]);
     }
 }, 40);
