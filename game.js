@@ -3,11 +3,22 @@
 var plr_xy = {
     x: 0.5, y: 1,
     vx: 0, vy: 0,
+    g: -0.008, vymin: -0.08,
     limit: true
 };
 
+var objinit = function () {
+    return {
+        x: -1, y: -1,
+        vx: 0, vy: 0,
+        g: 0, vymin: -0.04,
+        limit: false
+    };
+};
+
 var objs = [obj1, obj2, obj3];
-var objs_xy = [{x: -1}, {x: -1}, {x: -1}];
+var objs_xy = [objinit(), objinit(), objinit()];
+var objs_free = [0, 1, 2];
 
 //// input ////
 
@@ -15,6 +26,10 @@ var moffset;
 
 var updatex = function (x) {
     plr_xy.x = (x - moffset) / zone.clientWidth;
+};
+
+var jump = function () {
+    plr_xy.vy = -0.1;
 };
 
 main.onmousemove = function (e) {
@@ -56,21 +71,19 @@ var calcpos = function (xy) {
 
     // gravity
 
-    var g = -0.01;
-    xy.vy -= g;
+    xy.vy -= xy.g;
+    if (xy.vy < xy.vymin) {
+        xy.vy = xy.vymin;
+    }
 
     // collision
 
     var rate = -0.5;
 
-    xy.out = false;
-
     if (xy.x < 0) {
         if (xy.limit) {
             if (xy.vx < 0) xy.vx *= rate;
             xy.x = 0;
-        } else {
-            xy.out = true;
         }
     }
 
@@ -78,8 +91,6 @@ var calcpos = function (xy) {
         if (xy.limit) {
             if (xy.vx > 0) xy.vx *= rate;
             xy.x = 1;
-        } else {
-            xy.out = true;
         }
     }
 
@@ -87,8 +98,6 @@ var calcpos = function (xy) {
     //     if (xy.limit) {
     //         if (xy.vy < 0) xy.vy *= rate;
     //         xy.y = 0;
-    //     } else {
-    //         xy.out = true;
     //     }
     // }
 
@@ -96,8 +105,6 @@ var calcpos = function (xy) {
         if (xy.limit) {
             if (xy.vy > 0) xy.vy *= rate;
             xy.y = 1;
-        } else {
-            xy.out = true;
         }
     }
 
@@ -106,11 +113,44 @@ var calcpos = function (xy) {
 
 //// game ////
 
-var jump = function () {
-    plr_xy.vy = -0.1;
+var score = 0;
+
+var rand = function (lower, upper) {
+    return lower + Math.random() * (upper - lower);
 };
 
-//// output ////
+var randselect = function (list) {
+    return list[Math.floor(Math.random() * list.length)]
+}
+
+var pickobj = function () {
+    if (objs_free.length > 0) {
+        return objs_free.pop();
+    } else {
+        return undefined;
+    }
+};
+
+var throwobj = function () {
+    var i = pickobj();
+
+    if (i) {
+        var spd = 0.5;
+        var rev = randselect([false, true]);
+
+        objs_xy[i] = {
+            x: rev ? 1.1 : -0.1,
+            y: rand(0.2, 0.5),
+            vx: spd * rand(0.01, 0.02) * (rev ? -1 : 1),
+            vy: spd * rand(-0.02, -0.05),
+            g: -Math.pow(spd * rand(0.03, 0.06), 2),
+            vymin: -0.04,
+            limit: false
+        };
+    }
+};
+
+//// view ////
 
 var makepx = function (pos) {
     return Math.floor(pos) + 'px';
@@ -143,10 +183,18 @@ var applypos = function (obj, xy) {
 //// timer ////
 
 setInterval(function (e) {
+    // physics
+
     calcpos(plr_xy);
     for (var i in objs) {
         calcpos(objs_xy[i]);
     }
+
+    // game
+
+    throwobj();
+
+    // view
 
     doscale();
 
