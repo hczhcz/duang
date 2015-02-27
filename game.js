@@ -136,8 +136,8 @@ var doscale = function () {
 };
 
 var applypos = function (obj, xy) {
-    obj.style.left = makepx(zone.clientWidth * xy.x);
-    obj.style.top = makepx(zone.clientHeight * xy.y);
+    obj.style.left = makepx(zone.clientWidth * xy.x - obj.clientWidth * 0.5);
+    obj.style.top = makepx(zone.clientHeight * xy.y - obj.clientHeight * 0.5);
 };
 
 //// timer ////
