@@ -45,6 +45,14 @@ body {
     height: 100%;
 }
 
+.imgp2 {
+    position: absolute;
+    left: -50%;
+    top: -50%;
+    width: 200%;
+    height: 200%;
+}
+
 #man {
     opacity: 0.8;
 }

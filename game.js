@@ -155,8 +155,8 @@ var resetscore = function (value) {
 };
 
 var showscore = function () {
-    score1.innerText = score;
-    score2.innerText = localStorage.getItem(gamels);
+    score1.innerHTML = score;
+    score2.innerHTML = localStorage.getItem(gamels);
 }
 
 resetscore();
@@ -210,7 +210,7 @@ var throwobj = function (i) {
 
         objs_status[i] = -objs_status[i];
 
-        objs_text[i].innerText = randselect(
+        objs_text[i].innerHTML = randselect(
             OBJSTR[objs_status[i]]
         );
     }
