@@ -7,15 +7,6 @@ var plr_xy = {
     limit: true
 };
 
-var objinit = function () {
-    return {
-        x: -1, y: -1,
-        vx: 0, vy: 0,
-        g: 0, vymax: 0.03,
-        limit: false
-    };
-};
-
 var OBJCONSTS = {
     out: -2,
     free: -1,
@@ -29,6 +20,15 @@ var OBJSTR = {
     '1': ['效果!'],
     // feel free to add new items
     '2': ['观众!', '让寸分!', 'POI!', '蛤蛤!', '从网!', '蓝黑!']
+};
+
+var objinit = function (st) {
+    return {
+        x: -1, y: -1,
+        vx: 0, vy: 0,
+        g: 0, vymax: 0.03,
+        limit: false
+    };
 };
 
 var objs = [obj1, obj2, obj3];
@@ -153,7 +153,7 @@ var randchance = function (rate) {
 
 var xmodel = function (lower, upper) {
     // based on score
-    var scaled = score * 0.02;
+    var scaled = score * 0.01;
     return lower + (scaled / (1 + scaled)) * (upper - lower);
 };
 
@@ -166,8 +166,8 @@ var pickobj = function () {
 };
 
 var throwobj = function (i) {
-    if (randchance(xmodel(0.02, 0.1))) {
-        var spd = xmodel(0.5, 1);
+    if (randchance(xmodel(0.01, 0.1))) {
+        var spd = xmodel(0.4, 1);
         var rev = randchance(0.5);
 
         objs_xy[i] = {
@@ -181,14 +181,37 @@ var throwobj = function (i) {
         };
 
         objs_status[i] = -objs_status[i];
+
         objs_text[i].innerText = randselect(
             OBJSTR[objs_status[i]]
         );
     }
 };
 
+var inrange = function (pos1, pos2, len) {
+    return (
+        Math.pow(pos1.x - pos2.x, 2) +
+        Math.pow(pos1.y - pos2.y, 2)
+    ) < Math.pow(len, 2);
+};
+
 var checkobj = function (i) {
-    if (objs_xy[i].y > 1) {
+    if (objs_status[i] == OBJCONSTS.good) {
+        if (objs_xy[i].y > 1) {
+            objs_status[i] = OBJCONSTS.out;
+        } else if (inrange(objs_xy[i], plr_xy, 0.15)) {
+            score += 1;
+            objs_status[i] = OBJCONSTS.free;
+            objs_xy[i] = objinit();
+        }
+    } else if (objs_status[i] == OBJCONSTS.bad) {
+        if (objs_xy[i].y > 1) {
+            objs_status[i] = OBJCONSTS.free;
+        } else if (inrange(objs_xy[i], plr_xy, 0.15)) {
+            score = Math.floor(score / 2);
+            objs_status[i] = OBJCONSTS.free;
+            objs_xy[i] = objinit();
+        }
     }
 };
 
