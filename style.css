@@ -32,6 +32,7 @@ body {
 
 .obj {
     position: absolute;
+    overflow: hidden;
 }
 
 .plr {

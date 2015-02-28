@@ -16,9 +16,25 @@ var objinit = function () {
     };
 };
 
+var OBJCONSTS = {
+    out: -2,
+    free: -1,
+    good: 1,
+    bad: 2
+};
+
+var OBJSTR = {
+    '-2': [''],
+    '-1': [''],
+    '1': ['效果!'],
+    // feel free to add new items
+    '2': ['观众!', '让寸分!', 'POI!', '蛤蛤!', '从网!', '蓝黑!']
+};
+
 var objs = [obj1, obj2, obj3];
+var objs_text = [text1, text2, text3];
 var objs_xy = [objinit(), objinit(), objinit()];
-var objs_free = [0, 1, 2];
+var objs_status = [OBJCONSTS.free, OBJCONSTS.free, OBJCONSTS.free];
 
 //// input ////
 
@@ -32,29 +48,29 @@ var jump = function () {
     plr_xy.vy = -0.12;
 };
 
-main.onmousemove = function (e) {
-    updatex(e.clientX);
-    e.preventDefault();
-};
-
-main.onclick = function (e) {
+main.onmousedown = function (e) {
     updatex(e.clientX);
     jump();
     e.preventDefault();
 };
 
-main.ontouchmove = function (e) {
-    updatex(e.changedTouches[0].clientX);
+main.onmousemove = function (e) {
+    updatex(e.clientX);
     e.preventDefault();
-    main.onclick = undefined;
-    main.onmousemove = undefined;
 };
 
 main.ontouchstart = function (e) {
     updatex(e.changedTouches[0].clientX);
     jump();
     e.preventDefault();
-    main.onclick = undefined;
+    main.onmousedown = undefined;
+    main.onmousemove = undefined;
+};
+
+main.ontouchmove = function (e) {
+    updatex(e.changedTouches[0].clientX);
+    e.preventDefault();
+    main.onmousedown = undefined;
     main.onmousemove = undefined;
 };
 
@@ -129,22 +145,30 @@ var rand = function (lower, upper) {
 
 var randselect = function (list) {
     return list[Math.floor(Math.random() * list.length)]
-}
+};
+
+var randchance = function (rate) {
+    return Math.random() < rate;
+};
+
+var xmodel = function (lower, upper) {
+    // based on score
+    var scaled = score * 0.02;
+    return lower + (scaled / (1 + scaled)) * (upper - lower);
+};
 
 var pickobj = function () {
-    if (objs_free.length > 0) {
-        return objs_free.pop();
-    } else {
-        return undefined;
+    for (var i in objs) {
+        if (objs_status[i] < 0) {
+            return i;
+        }
     }
 };
 
-var throwobj = function () {
-    var i = pickobj();
-
-    if (i) {
-        var spd = 0.5;
-        var rev = randselect([false, true]);
+var throwobj = function (i) {
+    if (randchance(xmodel(0.02, 0.1))) {
+        var spd = xmodel(0.5, 1);
+        var rev = randchance(0.5);
 
         objs_xy[i] = {
             x: rev ? 1.1 : -0.1,
@@ -155,6 +179,16 @@ var throwobj = function () {
             vymax: 0.03,
             limit: false
         };
+
+        objs_status[i] = -objs_status[i];
+        objs_text[i].innerText = randselect(
+            OBJSTR[objs_status[i]]
+        );
+    }
+};
+
+var checkobj = function (i) {
+    if (objs_xy[i].y > 1) {
     }
 };
 
@@ -206,7 +240,14 @@ setInterval(function (e) {
 
     // game
 
-    throwobj();
+    for (var i in objs) {
+        checkobj(i);
+    }
+
+    var i1 = pickobj();
+    if (i1) {
+        throwobj(i1);
+    }
 
     // view
 
