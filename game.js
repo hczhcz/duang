@@ -227,6 +227,7 @@ var checkobj = function (i) {
             setscore(score + 1);
             objs_status[i] = OBJCONSTS.free;
             objs_xy[i] = objinit();
+            duang.style.opacity = 1;
         }
     } else if (objs_status[i] == OBJCONSTS.bad) {
         if (objs_xy[i].y > 1) {
@@ -236,6 +237,7 @@ var checkobj = function (i) {
             setscore(Math.floor(score * 0.5));
             objs_status[i] = OBJCONSTS.free;
             objs_xy[i] = objinit();
+            manred.style.opacity = 0.8;
         }
     }
 };
@@ -264,6 +266,11 @@ var doscale = function () {
     plr.style.width = pspx;
     plr.style.height = pspx;
 };
+
+var dofade = function () {
+    duang.style.opacity *= 0.9;
+    manred.style.opacity *= 0.95;
+}
 
 var applypos = function (obj, xy) {
     var x = zone.clientWidth * xy.x;
@@ -302,6 +309,7 @@ setInterval(function (e) {
     // view
 
     doscale();
+    dofade();
 
     applypos(plr, plr_xy);
     for (var i in objs) {

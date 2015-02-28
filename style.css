@@ -49,6 +49,10 @@ body {
     opacity: 0.8;
 }
 
+#manred {
+    opacity: 0;
+}
+
 #duang {
     opacity: 0;
 }
