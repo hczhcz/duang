@@ -43,11 +43,19 @@ main.onclick = function (e) {
     e.preventDefault();
 };
 
+main.ontouchmove = function (e) {
+    updatex(e.changedTouches[0].clientX);
+    e.preventDefault();
+    main.onclick = undefined;
+    main.onmousemove = undefined;
+};
+
 main.ontouchstart = function (e) {
     updatex(e.changedTouches[0].clientX);
     jump();
     e.preventDefault();
     main.onclick = undefined;
+    main.onmousemove = undefined;
 };
 
 var noevent = function (e) {
@@ -177,11 +185,12 @@ var doscale = function () {
 
 var applypos = function (obj, xy) {
     var x = zone.clientWidth * xy.x;
-    obj.style.left = makepx(x - obj.clientWidth * 0.5);
 
-    var y = zone.clientHeight - Math.min(
+    var y = zone.clientHeight * 0.5 + Math.min(
         zone.clientHeight,  zone.clientWidth
-    ) * (1 - xy.y);
+    ) * (xy.y - 0.5);
+
+    obj.style.left = makepx(x - obj.clientWidth * 0.5);
     obj.style.top = makepx(y - obj.clientHeight * 0.5);
 };
 
