@@ -38,6 +38,8 @@ var objs_status = [OBJCONSTS.free, OBJCONSTS.free, OBJCONSTS.free];
 
 //// input ////
 
+var paused = false;
+
 var moffset;
 
 var updatex = function (x) {
@@ -73,6 +75,16 @@ main.ontouchmove = function (e) {
     main.onmousedown = undefined;
     main.onmousemove = undefined;
 };
+
+document.onkeydown = function (e) {
+    if (paused) {
+        paused = false;
+        title.innerHTML = 'Duang!';
+    } else {
+        paused = true;
+        title.innerHTML = '暂停';
+    }
+}
 
 var noevent = function (e) {
     e.preventDefault();
@@ -291,22 +303,24 @@ var applypos = function (obj, xy) {
 //// timer ////
 
 setInterval(function (e) {
-    // physics
+    if (!paused) {
+        // physics
 
-    calcpos(plr_xy);
-    for (var i in objs) {
-        calcpos(objs_xy[i]);
-    }
+        calcpos(plr_xy);
+        for (var i in objs) {
+            calcpos(objs_xy[i]);
+        }
 
-    // game
+        // game
 
-    for (var i in objs) {
-        checkobj(i);
-    }
+        for (var i in objs) {
+            checkobj(i);
+        }
 
-    var i1 = pickobj();
-    if (i1) {
-        throwobj(i1);
+        var i1 = pickobj();
+        if (i1) {
+            throwobj(i1);
+        }
     }
 
     showscore();
