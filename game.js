@@ -135,9 +135,32 @@ var calcpos = function (xy) {
     return xy;
 };
 
-//// game ////
+//// scores ////
 
-var score = 0;
+var gamels = 'DUANG_BEST';
+
+var score = Math.floor(localStorage.getItem(gamels) * 0.5);
+if (typeof score != 'number') {
+    score = 0;
+    localStorage.setItem(gamels, 0);
+}
+
+var setscore = function (value) {
+    score = value;
+
+    var best = localStorage.getItem(gamels);
+    if (score > best) {
+        best = score;
+        localStorage.setItem(gamels, best);
+    }
+};
+
+var showscore = function () {
+    score1.innerText = score;
+    score2.innerText = localStorage.getItem(gamels);
+}
+
+//// game ////
 
 var rand = function (lower, upper) {
     return lower + Math.random() * (upper - lower);
@@ -167,7 +190,7 @@ var pickobj = function () {
 
 var throwobj = function (i) {
     if (randchance(xmodel(0.01, 0.1))) {
-        var spd = xmodel(0.4, 1);
+        var spd = xmodel(0.4, 1.2);
         var rev = randchance(0.5);
 
         objs_xy[i] = {
@@ -200,7 +223,8 @@ var checkobj = function (i) {
         if (objs_xy[i].y > 1) {
             objs_status[i] = OBJCONSTS.out;
         } else if (inrange(objs_xy[i], plr_xy, 0.15)) {
-            score += 1;
+            // good collision
+            setscore(score + 1);
             objs_status[i] = OBJCONSTS.free;
             objs_xy[i] = objinit();
         }
@@ -208,7 +232,8 @@ var checkobj = function (i) {
         if (objs_xy[i].y > 1) {
             objs_status[i] = OBJCONSTS.free;
         } else if (inrange(objs_xy[i], plr_xy, 0.15)) {
-            score = Math.floor(score / 2);
+            // bad collision
+            setscore(Math.floor(score * 0.5));
             objs_status[i] = OBJCONSTS.free;
             objs_xy[i] = objinit();
         }
@@ -271,6 +296,8 @@ setInterval(function (e) {
     if (i1) {
         throwobj(i1);
     }
+
+    showscore();
 
     // view
 
