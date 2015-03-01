@@ -95,10 +95,12 @@ var dopause = function (e) {
         paused = true;
         title.innerHTML = '暂停';
     }
+    e.preventDefault();
 };
 
 document.onkeydown = dopause;
 title.onclick = dopause;
+title.ontouchstart = dopause;
 
 ghlink.onclick = function (e) {
     window.location = 'https://github.com/hczhcz/duang';
