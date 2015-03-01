@@ -1,6 +1,7 @@
 body {
     font-family: sans-serif;
     cursor: default;
+    white-space: nowrap;
 }
 
 .main {
@@ -37,6 +38,8 @@ body {
 
 .obj {
     position: absolute;
+    min-width: 30%;
+    min-height: 30%;
     overflow: hidden;
 }
 
