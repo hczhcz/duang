@@ -1,5 +1,6 @@
 body {
     font-family: sans-serif;
+    cursor: default;
 }
 
 .main {
@@ -28,6 +29,10 @@ body {
     top: 4px;
     overflow: hidden;
     opacity: 0.6;
+}
+
+.link {
+    cursor: pointer;
 }
 
 .obj {

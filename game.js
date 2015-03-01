@@ -76,16 +76,6 @@ main.ontouchmove = function (e) {
     main.onmousemove = undefined;
 };
 
-document.onkeydown = function (e) {
-    if (paused) {
-        paused = false;
-        title.innerHTML = 'Duang!';
-    } else {
-        paused = true;
-        title.innerHTML = '暂停';
-    }
-}
-
 var noevent = function (e) {
     e.preventDefault();
 };
@@ -96,6 +86,23 @@ main.ondragstart = noevent;
 main.onfocus = noevent;
 main.onselect = noevent;
 main.onselectstart = noevent;
+
+var dopause = function (e) {
+    if (paused) {
+        paused = false;
+        title.innerHTML = 'Duang!';
+    } else {
+        paused = true;
+        title.innerHTML = '暂停';
+    }
+};
+
+document.onkeydown = dopause;
+title.onclick = dopause;
+
+ghlink.onclick = function (e) {
+    window.location = 'https://github.com/hczhcz/duang';
+};
 
 //// physics ////
 
